@@ -1,172 +1,82 @@
-# Carton Compliance Analyzer 📦
+# Carton Compliance Analyzer
 
-[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.25+-orange.svg)](https://streamlit.io)
-[![YOLOv8](https://img.shields.io/badge/YOLO-v8-blueviolet.svg)](https://ultralytics.com/)
-[![License: GNU GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+A computer vision application that turns warehouse photographs into **carton counts, stacking checks and an interactive analysis dashboard**. Built with YOLOv8, OpenCV and Streamlit.
 
-A Streamlit web application designed for analyzing carton compliance in images. It uses a YOLOv8 object detection model to identify cartons and then applies a series of configurable analysis modules to assess stacking quality, overhang issues, zone-based counts, and overall compliance.
+**Recognition:** Best Innovative Project at university, developed as a two-person project in an event with approximately 300 participants.
 
-This application is part of the `warehouse-management-app` repository.
+## See the application
 
-## ✨ Features
+![Recorded application demo](demo.webp)
 
-* **Object Detection:** Utilizes the included YOLOv8 model (`weights/best.pt`) to detect cartons in uploaded images.
-* **Pairwise Overhang Analysis:** Identifies cartons improperly overhanging others based on configurable thresholds.
-* **Advanced Stack Analysis:**
-  * Identifies vertical stacks of cartons.
-  * Checks for maximum stack height compliance.
-  * Analyzes stack alignment and stability.
-* **Zone-Based Counting:** Allows users to define custom rectangular zones on the image and counts cartons within each.
-* **Compliance Scoring:** Generates an overall compliance score based on the various analysis checks.
-* **Interactive UI:**
-  * Image upload for analysis.
-  * Visualization of detected boxes, overhangs, stacks, and zones directly on the image.
-  * Detailed results presented in tabs (Detections, Overhang, Stacks, Zones, Summary).
-* **Dashboard:** Provides an overview of analysis history, compliance trends, detection counts, and processing times.
-* **Analysis History:** Stores and allows review of past analysis results.
-* **Configurable Settings:**
-  * Detection parameters (confidence, IoU).
-  * Expected carton count.
-  * Enable/disable and configure parameters for overhang, stack, and zone analyses.
-  * Zone definitions (name, coordinates, color).
-* **Settings Persistence:** User settings and analysis history are saved locally in JSON files within the `data/` directory.
-* **Custom Theming:** Includes custom CSS for a polished look and feel.
-## 📄 Documentation 
-* **[Project Report](docs/RapportTechnique.pdf)** - Comprehensive analysis and documentation 
-* **[Technical Specifications](docs/RapportTechnique.pdf)** - Detailed technical information
+[Watch the recorded demo](demo.mp4) · [Technical report](docs/RapportTechnique.pdf) · [Main application](app.py)
 
-## 📸 Screenshots
+The recording demonstrates the interface; it is not a link to a hosted service.
 
-![image](https://github.com/user-attachments/assets/90f9a80c-6987-4edf-881e-92d7a902b472)
+## What it does
 
-<img src="demo.webp" alt="Warehouse Management Demo" width="800">
+- Detects cartons using the included `weights/best.pt` checkpoint.
+- Checks pairwise overhang, stack height and alignment using configurable geometric rules.
+- Counts cartons in user-defined rectangular zones.
+- Displays annotated images, detection details and a rule-based compliance score.
+- Tracks analysis history and processing times with Pandas and Plotly.
+- Saves settings and analysis history to local JSON files.
 
-## 🛠️ Tech Stack
+Here, **compliance** means the application's configured stacking and counting rules. It is not a certified safety or regulatory assessment.
 
-* **Backend/ML:**
-  * Python 3.8+
-  * Ultralytics YOLOv8 (for object detection)
-  * OpenCV (for image processing)
-  * NumPy (for numerical operations)
-  * Pillow (PIL) (for image manipulation)
-* **Frontend/Web Framework:**
-  * Streamlit
-* **Data & Visualization:**
-  * Pandas (for data manipulation)
-  * Plotly (for interactive charts)
-* **Streamlit Extras:**
-  * `streamlit-option-menu` (for sidebar navigation)
-  * `streamlit-extras` (for UI enhancements like colored headers, metric cards)
+## Processing flow
 
-## Prerequisites
+```mermaid
+flowchart LR
+    I[Uploaded image] --> Y[YOLOv8 carton detections]
+    Y --> O[OpenCV geometry and stack checks]
+    O --> S[Rule-based score and zone counts]
+    S --> V[Streamlit image overlays and Plotly dashboard]
+    S --> H[Local JSON analysis history]
+```
 
-* Python 3.8 or higher
-* Git
+## Run locally
 
-## ⚙️ Setup & Installation
+Use a Python virtual environment and install [requirements.txt](requirements.txt). Large model dependencies may take time to install.
 
-1. **Clone the repository:**
 ```bash
 git clone https://github.com/shirahex/warehouse-management-app.git
 cd warehouse-management-app
-```
-
-2. **Create and activate a virtual environment (recommended):**
-```bash
-python -m venv venv
-# On Windows
-venv\Scripts\activate
-# On macOS/Linux
-source venv/bin/activate
-```
-
-3. **Install dependencies:**
-The required Python packages are listed in `requirements.txt`. The YOLO model (`weights/best.pt`) is included in this repository.
-```bash
-pip install -r requirements.txt
-```
-*(Note: The `packages.txt` file is typically used for system-level dependencies when deploying to platforms like Streamlit Cloud. For local setup, `requirements.txt` is usually sufficient.)*
-
-## 🚀 Running the Application
-
-Once the setup is complete, run the Streamlit application:
-
-```bash
+python -m venv .venv
+# macOS/Linux
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## 📁 Project Structure
+Open http://localhost:8501. The YOLO checkpoint is already included; `packages.txt` lists deployment-specific system dependencies.
 
-```
-warehouse-management-app/
-├── data/                # Stores user data
-│   ├── analysis_history.json  # History of analyses
-│   └── user_settings.json     # User-defined settings
-├── weights/
-│   └── best.pt          # Pre-trained YOLO model file
-├── .gitignore           # Specifies intentionally untracked files
-├── app.py               # Main Streamlit application script
-├── packages.txt         # System-level dependencies for deployment
-├── requirements.txt     # Python package dependencies
-└── README.md            # This file
-```
+## Try a review
 
-## 🔧 Configuration
+1. Upload a clear photograph containing cartons.
+2. Set detection confidence and overlap thresholds.
+3. Configure expected carton count, maximum stack height and overhang limits.
+4. Inspect image overlays and the detection, stack and zone results.
+5. Open the dashboard to compare saved analyses.
 
-Most configurations can be done directly through the "Settings" page in the application UI. These settings are saved to `data/user_settings.json`.
+Detection quality depends on image conditions and the checkpoint's training distribution. Verify the detections before interpreting the resulting score.
 
-* **Detection Parameters:** Confidence threshold, IoU threshold for Non-Maximum Suppression (NMS).
+## Repository map
 
-* **Analysis Modules:** Enable/disable and set parameters for:
-  * Pairwise Overhang Analysis
-  * Advanced Stack Analysis
-  * Zone Counting
+| Path | Contents |
+| --- | --- |
+| [app.py](app.py) | Detection, geometric analysis, UI and dashboard |
+| [weights/](weights/) | Included YOLO checkpoint |
+| [data/](data/) | JSON settings and analysis history |
+| [docs/RapportTechnique.pdf](docs/RapportTechnique.pdf) | Technical report |
+| [demo.mp4](demo.mp4) | Recorded walkthrough |
 
-* **Zone Management:** Define up to MAX_ZONES (currently 5) with names, pixel coordinates (Xmin, Ymin, Xmax, Ymax), and display colors.
+## Scope and next steps
 
-* **Appearance:** A conceptual dark mode toggle is present.
+The current application analyzes uploaded images, not a live camera stream. Its geometry is based on 2D image coordinates; perspective and occlusion can affect results. A score is a configurable heuristic, not a measured probability of safety. This repository does not publish a reproducible held-out detection benchmark.
 
-* **Data Management:** Save, load, or reset settings to default.
+Future work includes perspective calibration, labeled evaluation images and repeatable tests for the geometric checks. Local JSON storage is appropriate for a demo; concurrent multi-user use would require persistent storage and access controls.
 
-## 🎨 Customization
+## Credits and license
 
-* **Theme Colors:** The THEME dictionary in app.py defines the color palette used throughout the app and in the custom CSS.
-
-* **CSS:** Custom CSS is loaded via the `load_custom_css()` function. You can modify the CSS rules within this function to further tailor the appearance.
-
-* **YOLO Model:** To use a different model, replace `weights/best.pt` or update the MODEL_PATH variable in app.py. If you replace the model, ensure it's compatible with the Ultralytics YOLO library version specified in requirements.txt.
-
-## 📈 Future Enhancements
-
-* **Live Camera Feed Analysis:** Integrate real-time analysis from a camera stream.
-* **Batch Image Processing:** Allow users to upload and analyze multiple images at once.
-* **Advanced Reporting:** Generate PDF or CSV reports of the analysis.
-* **User Authentication:** For multi-user environments or to protect sensitive data.
-* **Database Integration:** Use a proper database (e.g., SQLite, PostgreSQL) instead of JSON files for more robust data storage, especially for analysis_history.
-* **More Sophisticated Error Handling & Logging.**
-* **Unit and Integration Tests.**
-
-## 🤝 Contributing
-
-Contributions are welcome! If you have suggestions for improvements or bug fixes, please:
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/AmazingFeature`).
-3. Make your changes.
-4. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-5. Push to the branch (`git push origin feature/AmazingFeature`).
-6. Open a Pull Request.
-
-## 📄 License
-
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details or visit [https://www.gnu.org/licenses/gpl-3.0.html](https://www.gnu.org/licenses/gpl-3.0.html).
-
-## 🙏 Acknowledgements
-
-* Streamlit for the awesome web app framework.
-* Ultralytics for the YOLO object detection models and library.
-* Plotly for interactive charting.
-* The creators of streamlit-option-menu and streamlit-extras.
-
-Happy Analyzing! 📦🚀
+Developed by Marouane Daouki with Imane Alouani. Built with Ultralytics, OpenCV, Streamlit and Plotly. See [LICENSE](LICENSE) for the repository's existing GPLv3 notice and [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidance.
