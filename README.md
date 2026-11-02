@@ -80,3 +80,8 @@ Future work includes perspective calibration, labeled evaluation images and repe
 ## Credits and license
 
 Developed by Marouane Daouki with Imane Alouani. Built with Ultralytics, OpenCV, Streamlit and Plotly. See [LICENSE](LICENSE) for the repository's existing GPLv3 notice and [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidance.
+
+
+---
+
+Original repository: [shirahex/warehouse-management-app](https://github.com/shirahex/warehouse-management-app). Academic team project by Marouane Daouki and Imane Alouani.
